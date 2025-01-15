@@ -1,0 +1,49 @@
+package templates 
+
+import "github.com/alfiehiscox/alfiesacoder/services"
+
+templ Base(title string) {
+	<html>
+		<!DOCTYPE html>
+		<html lang="en">
+			<head>
+				<meta charset="UTF-8"/>
+				<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+				<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+				<title>{ title }</title>
+				<link rel="stylesheet" href="./style.css"/>
+				<link rel="icon" href="./favicon.ico" type="image/x-icon"/>
+			</head>
+			<body class="flex justify-center">
+				{ children... }
+			</body>
+		</html>
+	</html>
+}
+
+templ Index(
+	projects []services.Project,
+	articles []services.Article,
+) {
+	@Base("alfiesacoder") {
+		<main class="w-1/2">
+			<h1 class="text-lg">Alfie Hiscox - alfiesacoder</h1>
+			@IndexProjectView(projects)
+			@IndexArticleView(articles)
+		</main>
+	}
+}
+
+templ IndexProjectView(projects []services.Project) {
+	<h2>Projects: </h2>
+	for _, project := range projects {
+		@ProjectPreview(project)
+	}
+}
+
+templ ProjectPreview(project services.Project) {
+}
+
+templ IndexArticleView(posts []services.Article) {
+	<h2>Articles: </h2>
+}

@@ -12,6 +12,7 @@ import (
 	"os/signal"
 	"sync"
 
+	"github.com/alfiehiscox/alfiesacoder/services"
 	"github.com/joho/godotenv"
 )
 
@@ -48,7 +49,13 @@ func run(
 		return errors.New("port not set in environment variables")
 	}
 
-	srv := NewServer(log)
+	projects := services.NewProjectService()
+	articles := services.NewArticleService("./content/articles", log)
+	if err := articles.Init(); err != nil {
+		return err
+	}
+
+	srv := NewServer(log, projects, articles)
 	httpServer := &http.Server{
 		Addr:    net.JoinHostPort(host, port),
 		Handler: srv,
@@ -84,10 +91,17 @@ func run(
 
 func NewServer(
 	log *log.Logger,
+	projectService *services.ProjectService,
+	articleService *services.ArticleService,
 ) http.Handler {
 
 	mux := http.NewServeMux()
-	addRoutes(mux, log)
+	addRoutes(
+		mux,
+		log,
+		projectService,
+		articleService,
+	)
 
 	var handler http.Handler = mux
 	// middleware
@@ -98,6 +112,11 @@ func NewServer(
 func addRoutes(
 	mux *http.ServeMux,
 	log *log.Logger,
+	projectService *services.ProjectService,
+	articleService *services.ArticleService,
 ) {
-	mux.Handle("/", handleIndex(log))
+	mux.Handle("/", handleIndex(log, projectService, articleService))
+	mux.Handle("/style.css", handleStyles())
+	mux.Handle("/articles/:title", handleArticles(log, articleService))
+	mux.Handle("/projects/:name", handleProjects(log, projectService))
 }
