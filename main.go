@@ -10,15 +10,18 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"sync"
 
 	"github.com/alfiehiscox/alfiesacoder/services"
 	"github.com/joho/godotenv"
+	"github.com/yuin/goldmark"
+	meta "github.com/yuin/goldmark-meta"
 )
 
 func main() {
 	ctx := context.Background()
-	if err := run(ctx, os.Getenv, os.Stderr, os.Stdout); err != nil {
+	if err := run(ctx, os.Getenv, os.Getwd, os.Stderr, os.Stdout); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
@@ -27,6 +30,7 @@ func main() {
 func run(
 	ctx context.Context,
 	getenv func(string) string,
+	getwd func() (string, error),
 	stdout io.Writer,
 	stderr io.Writer,
 ) error {
@@ -49,8 +53,22 @@ func run(
 		return errors.New("port not set in environment variables")
 	}
 
-	projects := services.NewProjectService()
-	articles := services.NewArticleService("./content/articles", log)
+	wd, err := getwd()
+	if err != nil {
+		return err
+	}
+
+	markdown := goldmark.New(
+		goldmark.WithExtensions(meta.Meta),
+	)
+
+	projects := services.NewProjectService(markdown)
+	articles := services.NewArticleService(
+		ctx,
+		path.Join(wd, "content", "articles"),
+		log,
+		markdown,
+	)
 	if err := articles.Init(); err != nil {
 		return err
 	}

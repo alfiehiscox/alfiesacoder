@@ -44,6 +44,14 @@ templ IndexProjectView(projects []services.Project) {
 templ ProjectPreview(project services.Project) {
 }
 
-templ IndexArticleView(posts []services.Article) {
+templ IndexArticleView(articles []services.Article) {
 	<h2>Articles: </h2>
+	for _, article := range articles {
+		@ArticlePreview(article)
+	}
+}
+
+templ ArticlePreview(article services.Article) {
+	<h2>{ article.Title }</h2>
+	<p>{ article.Description }</p>
 }
