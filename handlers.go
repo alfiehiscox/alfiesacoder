@@ -37,7 +37,14 @@ func handleArticles(
 ) http.HandlerFunc {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-
+			article, ok := articleService.GetArticleByURL(r.RequestURI)
+			if !ok {
+				log.Printf("Error: Could not article with url %s\n", r.RequestURI)
+				templates.NotFound().Render(r.Context(), w)
+				return
+			}
+			article_page := templates.Article(article)
+			article_page.Render(r.Context(), w)
 		},
 	)
 }

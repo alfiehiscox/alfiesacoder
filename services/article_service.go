@@ -18,6 +18,7 @@ type Article struct {
 	Title       string
 	Description string
 	Content     string
+	URL         string
 }
 
 type ArticleService struct {
@@ -27,6 +28,7 @@ type ArticleService struct {
 	Initialised bool
 	Articles    map[string]Article
 	Markdown    goldmark.Markdown
+	BaseURL     string
 }
 
 func NewArticleService(
@@ -85,10 +87,17 @@ func (as *ArticleService) Init() error {
 			description = d
 		}
 
+		metaURL := metaData["URL"]
+		var url string
+		if u, ok := metaURL.(string); ok {
+			url = u
+		}
+
 		article.Filename = entry.Name()
 		article.Title = title
 		article.Description = description
 		article.Content = content.String()
+		article.URL = url
 		as.Articles[article.Filename] = article
 
 	}
@@ -98,8 +107,27 @@ func (as *ArticleService) Init() error {
 }
 
 func (as *ArticleService) GetArticles() (articles []Article) {
+	if !as.Initialised {
+		return
+	}
+
 	for _, article := range as.Articles {
 		articles = append(articles, article)
 	}
+
 	return articles
+}
+
+func (as *ArticleService) GetArticleByURL(url string) (a Article, ok bool) {
+	if !as.Initialised {
+		return
+	}
+
+	for _, article := range as.Articles {
+		if article.URL == url {
+			return article, true
+		}
+	}
+
+	return
 }

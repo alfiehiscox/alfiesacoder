@@ -1,0 +1,12 @@
+package templates
+
+import "github.com/alfiehiscox/alfiesacoder/services"
+
+templ Article(article services.Article) {
+	@Base(article.Title) {
+		<main class="w-1/2">
+			<h1 class="text-lg">{ article.Title }</h1>
+			@templ.Raw(article.Content)
+		</main>
+	}
+}

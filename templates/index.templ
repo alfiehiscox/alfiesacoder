@@ -11,8 +11,8 @@ templ Base(title string) {
 				<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 				<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
 				<title>{ title }</title>
-				<link rel="stylesheet" href="./style.css"/>
-				<link rel="icon" href="./favicon.ico" type="image/x-icon"/>
+				<link rel="stylesheet" href="/style.css"/>
+				<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 			</head>
 			<body class="flex justify-center">
 				{ children... }
@@ -52,6 +52,14 @@ templ IndexArticleView(articles []services.Article) {
 }
 
 templ ArticlePreview(article services.Article) {
-	<h2>{ article.Title }</h2>
+	<h2><a href={ templ.URL(article.URL) }>{ article.Title }</a></h2>
 	<p>{ article.Description }</p>
+}
+
+templ NotFound() {
+	@Base("Not Found") {
+		<div class="w-1/3">
+			<h1>404 - Not Found</h1>
+		</div>
+	}
 }

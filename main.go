@@ -114,6 +114,7 @@ func NewServer(
 ) http.Handler {
 
 	mux := http.NewServeMux()
+
 	addRoutes(
 		mux,
 		log,
@@ -135,6 +136,6 @@ func addRoutes(
 ) {
 	mux.Handle("/", handleIndex(log, projectService, articleService))
 	mux.Handle("/style.css", handleStyles())
-	mux.Handle("/articles/:title", handleArticles(log, articleService))
-	mux.Handle("/projects/:name", handleProjects(log, projectService))
+	mux.Handle("/articles/{title}", handleArticles(log, articleService))
+	mux.Handle("/projects/{name}", handleProjects(log, projectService))
 }
