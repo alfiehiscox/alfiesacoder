@@ -42,6 +42,8 @@ templ IndexProjectView(projects []services.Project) {
 }
 
 templ ProjectPreview(project services.Project) {
+	<h2><a href={ templ.URL(project.URL) }>{ project.Name }</a></h2>
+	<p>{ project.Description }</p>
 }
 
 templ IndexArticleView(articles []services.Article) {

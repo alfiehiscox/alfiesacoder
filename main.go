@@ -62,12 +62,23 @@ func run(
 		goldmark.WithExtensions(meta.Meta),
 	)
 
-	projects := services.NewProjectService(markdown)
-	articles := services.NewArticleService(
+	projects := services.NewContentService[services.Project](
+		ctx,
+		path.Join(wd, "content", "projects"),
+		log,
+		markdown,
+		services.ProjectExtractionFunction,
+	)
+	if err := projects.Init(); err != nil {
+		return err
+	}
+
+	articles := services.NewContentService[services.Article](
 		ctx,
 		path.Join(wd, "content", "articles"),
 		log,
 		markdown,
+		services.ArticleExtractionFunction,
 	)
 	if err := articles.Init(); err != nil {
 		return err
@@ -109,8 +120,8 @@ func run(
 
 func NewServer(
 	log *log.Logger,
-	projectService *services.ProjectService,
-	articleService *services.ArticleService,
+	projectService *services.ContentService[services.Project],
+	articleService *services.ContentService[services.Article],
 ) http.Handler {
 
 	mux := http.NewServeMux()
@@ -131,8 +142,8 @@ func NewServer(
 func addRoutes(
 	mux *http.ServeMux,
 	log *log.Logger,
-	projectService *services.ProjectService,
-	articleService *services.ArticleService,
+	projectService *services.ContentService[services.Project],
+	articleService *services.ContentService[services.Article],
 ) {
 	mux.Handle("/", handleIndex(log, projectService, articleService))
 	mux.Handle("/style.css", handleStyles())

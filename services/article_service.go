@@ -2,11 +2,7 @@ package services
 
 import (
 	"bytes"
-	"context"
 	"errors"
-	"log"
-	"os"
-	"path"
 
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
@@ -21,113 +17,50 @@ type Article struct {
 	URL         string
 }
 
-type ArticleService struct {
-	Context     context.Context
-	Logger      *log.Logger
-	ContextPath string
-	Initialised bool
-	Articles    map[string]Article
-	Markdown    goldmark.Markdown
-	BaseURL     string
+func (a Article) GetURL() string {
+	return a.URL
 }
 
-func NewArticleService(
-	ctx context.Context,
-	path string,
-	logger *log.Logger,
-	markdown goldmark.Markdown,
-) *ArticleService {
-	return &ArticleService{
-		Logger:      logger,
-		Context:     ctx,
-		ContextPath: path,
-		Initialised: false,
-		Articles:    make(map[string]Article),
-		Markdown:    markdown,
+func ArticleExtractionFunction(
+	data []byte,
+	md goldmark.Markdown,
+	filename string,
+) (
+	article Article,
+	err error,
+) {
+	parser_context := parser.NewContext()
+	var content bytes.Buffer
+	if err := md.Convert(data, &content, parser.WithContext(parser_context)); err != nil {
+		return article, err
 	}
-}
+	metaData := meta.Get(parser_context)
 
-// Graphs and Caches all articles content pages
-func (as *ArticleService) Init() error {
-	if as.Initialised {
-		return errors.New("ArticleService is already initialised")
-	}
-
-	articleEntries, err := os.ReadDir(as.ContextPath)
-	if err != nil {
-		as.Initialised = false
-		return err
+	metaURL := metaData["URL"]
+	var url string
+	if u, ok := metaURL.(string); ok {
+		url = u
+	} else {
+		return Article{}, errors.New("URL most be defined in the meta of all content files.")
 	}
 
-	for _, entry := range articleEntries {
-
-		var article Article
-		data, err := os.ReadFile(path.Join(as.ContextPath, entry.Name()))
-		if err != nil {
-			as.Initialised = false
-			return err
-		}
-
-		parser_context := parser.NewContext()
-		var content bytes.Buffer
-		if err := as.Markdown.Convert(data, &content, parser.WithContext(parser_context)); err != nil {
-			return err
-		}
-		metaData := meta.Get(parser_context)
-
-		metaTitle := metaData["Title"]
-		var title string
-		if t, ok := metaTitle.(string); ok {
-			title = t
-		}
-
-		metaDescription := metaData["Description"]
-		var description string
-		if d, ok := metaDescription.(string); ok {
-			description = d
-		}
-
-		metaURL := metaData["URL"]
-		var url string
-		if u, ok := metaURL.(string); ok {
-			url = u
-		}
-
-		article.Filename = entry.Name()
-		article.Title = title
-		article.Description = description
-		article.Content = content.String()
-		article.URL = url
-		as.Articles[article.Filename] = article
-
+	metaTitle := metaData["Title"]
+	var title string
+	if t, ok := metaTitle.(string); ok {
+		title = t
 	}
 
-	as.Initialised = true
-	return nil
-}
-
-func (as *ArticleService) GetArticles() (articles []Article) {
-	if !as.Initialised {
-		return
+	metaDescription := metaData["Description"]
+	var description string
+	if d, ok := metaDescription.(string); ok {
+		description = d
 	}
 
-	for _, article := range as.Articles {
-		articles = append(articles, article)
-	}
+	article.Filename = filename
+	article.Title = title
+	article.Description = description
+	article.Content = content.String()
+	article.URL = url
 
-	return articles
-}
-
-func (as *ArticleService) GetArticleByURL(url string) (a Article, ok bool) {
-	if !as.Initialised {
-		return
-	}
-
-	for _, article := range as.Articles {
-		if article.URL == url {
-			return article, true
-		}
-	}
-
-	return
+	return article, nil
 }
