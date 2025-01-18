@@ -145,8 +145,9 @@ func addRoutes(
 	projectService *services.ContentService[services.Project],
 	articleService *services.ContentService[services.Article],
 ) {
+	static := http.FileServer(http.Dir("./static"))
 	mux.Handle("/", handleIndex(log, projectService, articleService))
-	mux.Handle("/style.css", handleStyles())
+	mux.Handle("/static/", http.StripPrefix("/static/", static))
 	mux.Handle("/articles/{title}", handleArticles(log, articleService))
 	mux.Handle("/projects/{name}", handleProjects(log, projectService))
 }

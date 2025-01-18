@@ -23,12 +23,8 @@ func handleIndex(
 	)
 }
 
-func handleStyles() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFile(w, r, "./static/output.css")
-		},
-	)
+func handleStatic() http.Handler {
+	return http.FileServer(http.Dir("./static"))
 }
 
 func handleArticles(

@@ -7,5 +7,10 @@ module.exports = {
   plugins: [
 	require('@tailwindcss/typography'),
   ],
+  safelist: [
+	{
+		pattern: /bg-blue-+/,
+	}
+  ], 
 }
 

@@ -7,3 +7,7 @@ Personal blog and website.
 - Go ❤️
 - Templ + Goldmark
 - AlpineJS + Tailwindcss
+
+## TODO
+
+- [] Need to sort articles by publish date

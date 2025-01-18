@@ -10,13 +10,14 @@ import (
 )
 
 type Project struct {
-	Filename    string
-	Name        string
-	Description string
-	Content     string
-	URL         string
-	Link        string
-	Publish     bool
+	Filename     string
+	Name         string
+	Description  string
+	Content      string
+	URL          string
+	Link         string
+	Publish      bool
+	DisplayImage string
 }
 
 func (p Project) GetURL() string {
@@ -76,12 +77,19 @@ func ProjectExtractionFunction(
 		publish = p
 	}
 
+	metaDisplayImage := metaData["DisplayImage"]
+	var displayImage string
+	if di, ok := metaDisplayImage.(string); ok {
+		displayImage = di
+	}
+
 	project.Filename = filename
 	project.Name = name
 	project.Description = description
 	project.Content = content.String()
 	project.Link = link
 	project.URL = url
+	project.DisplayImage = displayImage
 	project.Publish = publish
 
 	return project, nil
