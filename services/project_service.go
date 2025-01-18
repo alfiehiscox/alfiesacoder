@@ -16,10 +16,15 @@ type Project struct {
 	Content     string
 	URL         string
 	Link        string
+	Publish     bool
 }
 
 func (p Project) GetURL() string {
 	return p.URL
+}
+
+func (p Project) GetPublish() bool {
+	return p.Publish
 }
 
 func ProjectExtractionFunction(
@@ -65,12 +70,19 @@ func ProjectExtractionFunction(
 		link = "No Current Repository"
 	}
 
+	metaPublish := metaData["Publish"]
+	publish := false
+	if p, ok := metaPublish.(bool); ok {
+		publish = p
+	}
+
 	project.Filename = filename
 	project.Name = name
 	project.Description = description
 	project.Content = content.String()
 	project.Link = link
 	project.URL = url
+	project.Publish = publish
 
 	return project, nil
 }

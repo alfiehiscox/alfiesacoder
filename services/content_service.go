@@ -12,6 +12,7 @@ import (
 
 type ContentType interface {
 	GetURL() string
+	GetPublish() bool
 }
 
 type ExtractionFunction[T ContentType] func(
@@ -99,7 +100,9 @@ func (cs *ContentService[T]) GetContent() (contents []T) {
 	}
 
 	for _, content := range cs.Content {
-		contents = append(contents, content)
+		if content.GetPublish() {
+			contents = append(contents, content)
+		}
 	}
 
 	return contents
