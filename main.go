@@ -62,23 +62,16 @@ func run(
 		goldmark.WithExtensions(meta.Meta),
 	)
 
-	projects := services.NewContentService[services.Project](
-		ctx,
-		path.Join(wd, "content", "projects"),
-		log,
-		markdown,
-		services.ProjectExtractionFunction,
-	)
+	projects := services.NewProjectService(ctx, path.Join(wd, "content", "projects.json"), log)
 	if err := projects.Init(); err != nil {
 		return err
 	}
 
-	articles := services.NewContentService[services.Article](
+	articles := services.NewArticleService(
 		ctx,
 		path.Join(wd, "content", "articles"),
 		log,
 		markdown,
-		services.ArticleExtractionFunction,
 	)
 	if err := articles.Init(); err != nil {
 		return err
@@ -120,8 +113,8 @@ func run(
 
 func NewServer(
 	log *log.Logger,
-	projectService *services.ContentService[services.Project],
-	articleService *services.ContentService[services.Article],
+	projectService *services.ProjectService,
+	articleService *services.ArticleService,
 ) http.Handler {
 
 	mux := http.NewServeMux()
@@ -142,12 +135,11 @@ func NewServer(
 func addRoutes(
 	mux *http.ServeMux,
 	log *log.Logger,
-	projectService *services.ContentService[services.Project],
-	articleService *services.ContentService[services.Article],
+	projectService *services.ProjectService,
+	articleService *services.ArticleService,
 ) {
 	static := http.FileServer(http.Dir("./static"))
 	mux.Handle("/", handleIndex(log, projectService, articleService))
 	mux.Handle("/static/", http.StripPrefix("/static/", static))
 	mux.Handle("/articles/{title}", handleArticles(log, articleService))
-	mux.Handle("/projects/{name}", handleProjects(log, projectService))
 }

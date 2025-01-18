@@ -1,9 +1,6 @@
 package templates 
 
-import (
-	"fmt"
-	"github.com/alfiehiscox/alfiesacoder/services"
-)
+import "github.com/alfiehiscox/alfiesacoder/services"
 
 templ Base(title string) {
 	<html>
@@ -72,23 +69,39 @@ templ Header() {
 
 templ IndexProjectView(projects []services.Project) {
 	<div class="flex justify-between items-center">
-		<h2 class="text-xl font-bold ">Projects: </h2>
-		<a href="/" class="text-sm text-blue-500 hover:underline">More</a>
+		<h2 class="text-xl font-bold">Projects: </h2>
+		<a href="http://github.com/alfiehiscox" class="text-sm text-blue-500 hover:underline">More</a>
 	</div>
 	<hr class="h-px mb-4 mt-2 bg-gray-200 border-0"/>
-	<div class="flex">
+	<div class="grid grid-cols-3 gap-3">
 		for i, project := range projects {
-			if i < 5 {
-				<div class={ "flex-grow h-24 mx-2 rounded", "bg-blue-" + fmt.Sprintf("%d", i+1) + "00" }>
-					<a href={ templ.URL(project.URL) }>{ project.Name }</a>
+			if i < 6 {
+				<div class="p-4 min-h-24 rounded-lg border border-gray-300">
+					<div class="flex justify-between items-center mb-3">
+						<a class="text-blue-500 hover:underline" href={ templ.URL(project.URL) }>{ project.Name }</a>
+						@StatusIcon(project.Status)
+					</div>
+					<p class="text-gray-600 text-sm">{ project.Description }</p>
 				</div>
 			}
 		}
 	</div>
 }
 
+templ StatusIcon(status string) {
+	if status == "Done" {
+		<span class="bg-green-600 w-2 h-2 rounded-full"></span>
+	} else if status == "Doing" {
+		<span class="bg-yellow-400 w-2 h-2 rounded-full"></span>
+	} else if status == "Dump" {
+		<span class="bg-red-500 w-2 h-2 rounded-full"></span>
+	} else {
+		<span></span>
+	}
+}
+
 templ IndexArticleView(articles []services.Article) {
-	<div class="flex justify-between items-center mt-2">
+	<div class="flex justify-between items-center mt-5">
 		<h2 class="text-xl font-bold ">Recent Articles: </h2>
 		<a href="/" class="text-sm text-blue-500 hover:underline">Archive</a>
 	</div>

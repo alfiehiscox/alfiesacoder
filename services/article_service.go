@@ -2,7 +2,11 @@ package services
 
 import (
 	"bytes"
+	"context"
 	"errors"
+	"log"
+	"os"
+	"path"
 
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
@@ -20,12 +24,83 @@ type Article struct {
 	Publish     bool
 }
 
-func (a Article) GetURL() string {
-	return a.URL
+type ArticleService struct {
+	initialised bool
+
+	Context     context.Context
+	Logger      *log.Logger
+	ContextPath string
+	Articles    map[string]Article
+	Markdown    goldmark.Markdown
 }
 
-func (a Article) GetPublish() bool {
-	return a.Publish
+func NewArticleService(
+	ctx context.Context,
+	path string,
+	logger *log.Logger,
+	md goldmark.Markdown,
+) *ArticleService {
+	return &ArticleService{
+		Logger:      logger,
+		Context:     ctx,
+		ContextPath: path,
+		Articles:    make(map[string]Article),
+		Markdown:    md,
+	}
+}
+
+func (as *ArticleService) Init() error {
+	if as.initialised {
+		return errors.New("ArticleService is already initialised")
+	}
+
+	articleEntries, err := os.ReadDir(as.ContextPath)
+	if err != nil {
+		as.initialised = false
+		return err
+	}
+
+	for _, entry := range articleEntries {
+
+		data, err := os.ReadFile(path.Join(as.ContextPath, entry.Name()))
+		if err != nil {
+			as.initialised = false
+			return err
+		}
+
+		article, err := ArticleExtractionFunction(data, as.Markdown, entry.Name())
+		if err != nil {
+			return err
+		}
+
+		as.Articles[article.URL] = article
+
+	}
+
+	as.initialised = true
+	return nil
+}
+
+func (as *ArticleService) GetArticleByURL(url string) (a Article, ok bool) {
+	if !as.initialised {
+		return
+	}
+	a, ok = as.Articles[url]
+	return
+}
+
+func (as *ArticleService) GetPublishedArticles() (articles []Article) {
+	if !as.initialised {
+		return
+	}
+
+	for _, article := range as.Articles {
+		if article.Publish {
+			articles = append(articles, article)
+		}
+	}
+
+	return articles
 }
 
 func ArticleExtractionFunction(

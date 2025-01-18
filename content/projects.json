@@ -1,0 +1,23 @@
+[
+	{
+		"Name": "Project 1",
+		"Description": "This is Project 1 and this is a bit long of an idea of a descirption that is a bit longer and might need to be rendered on multiple lines",
+		"URL": "https://localhost:8080/project-repo-on-github/project-1",
+		"Status": "Doing",
+		"Publish": true
+	},
+	{
+		"Name": "Project 2",
+		"Description": "This is Project 2",
+		"URL": "https://localhost:8080/project-repo-on-github/project-2",
+		"Status": "Doing",
+		"Publish": true
+	},
+	{
+		"Name": "Project 3",
+		"Description": "This is Project 3",
+		"URL": "https://localhost:8080/project-repo-on-github/project-3",
+		"Status": "Doing",
+		"Publish": true
+	}
+]

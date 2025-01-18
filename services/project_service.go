@@ -1,96 +1,95 @@
 package services
 
 import (
-	"bytes"
+	"context"
+	"encoding/json"
 	"errors"
-
-	"github.com/yuin/goldmark"
-	meta "github.com/yuin/goldmark-meta"
-	"github.com/yuin/goldmark/parser"
+	"log"
+	"os"
 )
 
 type Project struct {
-	Filename     string
-	Name         string
-	Description  string
-	Content      string
-	URL          string
-	Link         string
-	Publish      bool
-	DisplayImage string
+	Filename    string
+	Name        string
+	Description string
+	Content     string
+	URL         string
+	Publish     bool
+
+	// Status can be 'Done', 'Doing', 'Dump'
+	Status string
 }
 
-func (p Project) GetURL() string {
-	return p.URL
+type ProjectService struct {
+	initialised bool
+
+	Context       context.Context
+	FileStorePath string
+	Logger        *log.Logger
+	Projects      []Project
 }
 
-func (p Project) GetPublish() bool {
-	return p.Publish
+func NewProjectService(
+	ctx context.Context,
+	path string,
+	logger *log.Logger,
+) *ProjectService {
+	return &ProjectService{
+		Context:       ctx,
+		FileStorePath: path,
+		Logger:        logger,
+		Projects:      []Project{},
+	}
 }
 
-func ProjectExtractionFunction(
-	data []byte,
-	md goldmark.Markdown,
-	filename string,
-) (
-	project Project,
-	err error,
-) {
-	parser_context := parser.NewContext()
-	var content bytes.Buffer
-	if err := md.Convert(data, &content, parser.WithContext(parser_context)); err != nil {
-		return project, err
-	}
-	metaData := meta.Get(parser_context)
-
-	metaURL := metaData["URL"]
-	var url string
-	if u, ok := metaURL.(string); ok {
-		url = u
-	} else {
-		return Project{}, errors.New("URL most be defined in the meta of all content files.")
+func (ps *ProjectService) Init() error {
+	if ps.initialised {
+		return errors.New("ProjectService is already initialised")
 	}
 
-	metaName := metaData["Name"]
-	var name string
-	if n, ok := metaName.(string); ok {
-		name = n
+	data, err := os.ReadFile(ps.FileStorePath)
+	if err != nil {
+		ps.initialised = false
+		return err
 	}
 
-	metaDescription := metaData["Description"]
-	var description string
-	if d, ok := metaDescription.(string); ok {
-		description = d
+	var projects []Project
+
+	err = json.Unmarshal(data, &projects)
+	if err != nil {
+		return err
 	}
 
-	metaLink := metaData["Link"]
-	var link string
-	if l, ok := metaLink.(string); ok {
-		link = l
-	} else {
-		link = "No Current Repository"
+	ps.initialised = true
+	ps.Projects = projects
+	return nil
+}
+
+func (ps *ProjectService) GetPublishedProjects() []Project {
+	if !ps.initialised {
+		return nil
 	}
 
-	metaPublish := metaData["Publish"]
-	publish := false
-	if p, ok := metaPublish.(bool); ok {
-		publish = p
+	var projects []Project
+	for _, project := range ps.Projects {
+		if project.Publish {
+			projects = append(projects, project)
+		}
 	}
 
-	metaDisplayImage := metaData["DisplayImage"]
-	var displayImage string
-	if di, ok := metaDisplayImage.(string); ok {
-		displayImage = di
+	return projects
+}
+
+func (ps *ProjectService) GetProjectByURL(url string) (p Project, ok bool) {
+	if !ps.initialised {
+		return
 	}
 
-	project.Filename = filename
-	project.Name = name
-	project.Description = description
-	project.Content = content.String()
-	project.Link = link
-	project.URL = url
-	project.DisplayImage = displayImage
-	project.Publish = publish
+	for _, project := range ps.Projects {
+		if project.URL == url {
+			return project, true
+		}
+	}
 
-	return project, nil
+	return
 }
