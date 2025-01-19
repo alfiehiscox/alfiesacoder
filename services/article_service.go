@@ -7,11 +7,15 @@ import (
 	"log"
 	"os"
 	"path"
+	"sort"
+	"time"
 
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/parser"
 )
+
+const ArticlePerPageDefault = 4
 
 type Article struct {
 	Filename    string
@@ -20,18 +24,21 @@ type Article struct {
 	Content     string
 	URL         string
 	Author      string
-	Date        string
+	DateString  string
+	Date        time.Time
 	Publish     bool
 }
 
 type ArticleService struct {
 	initialised bool
 
-	Context     context.Context
-	Logger      *log.Logger
-	ContextPath string
-	Articles    map[string]Article
-	Markdown    goldmark.Markdown
+	Context           context.Context
+	Logger            *log.Logger
+	ContextPath       string
+	Articles          map[string]Article
+	PublishedArticles []Article
+	Markdown          goldmark.Markdown
+	ArticlePerPage    int
 }
 
 func NewArticleService(
@@ -39,13 +46,16 @@ func NewArticleService(
 	path string,
 	logger *log.Logger,
 	md goldmark.Markdown,
+	per_page int,
 ) *ArticleService {
 	return &ArticleService{
-		Logger:      logger,
-		Context:     ctx,
-		ContextPath: path,
-		Articles:    make(map[string]Article),
-		Markdown:    md,
+		Logger:            logger,
+		Context:           ctx,
+		ContextPath:       path,
+		Articles:          make(map[string]Article),
+		PublishedArticles: []Article{},
+		Markdown:          md,
+		ArticlePerPage:    per_page,
 	}
 }
 
@@ -74,10 +84,10 @@ func (as *ArticleService) Init() error {
 		}
 
 		as.Articles[article.URL] = article
-
 	}
 
 	as.initialised = true
+	as.PublishedArticles = as.getPublishedArticles()
 	return nil
 }
 
@@ -89,18 +99,39 @@ func (as *ArticleService) GetArticleByURL(url string) (a Article, ok bool) {
 	return
 }
 
-func (as *ArticleService) GetPublishedArticles() (articles []Article) {
-	if !as.initialised {
-		return
-	}
-
+func (as *ArticleService) getPublishedArticles() (articles []Article) {
 	for _, article := range as.Articles {
 		if article.Publish {
 			articles = append(articles, article)
 		}
 	}
 
+	// Orderd by Date. Most recent first
+	sort.Slice(articles, func(i, j int) bool {
+		return articles[i].Date.After(articles[j].Date)
+	})
+
 	return articles
+}
+
+// 'page' needs to be zero indexed
+func (as *ArticleService) GetPublishedArticlesByPage(page int) (article []Article) {
+	if !as.initialised {
+		return
+	}
+
+	all_articles := as.PublishedArticles
+	total_possible_pages := len(all_articles) / as.ArticlePerPage
+
+	if page > total_possible_pages || page < 0 {
+		start_index := 0
+		end_index := min(as.ArticlePerPage, len(all_articles))
+		return all_articles[start_index:end_index]
+	} else {
+		start_index := page * as.ArticlePerPage
+		end_index := min(page*as.ArticlePerPage+as.ArticlePerPage, len(all_articles))
+		return all_articles[start_index:end_index]
+	}
 }
 
 func ArticleExtractionFunction(
@@ -146,9 +177,15 @@ func ArticleExtractionFunction(
 
 	// Dates are stored in documents as yyyy-MM-dd
 	metaDate := metaData["Date"]
-	var date string
+	var dateString string
+	var date time.Time
 	if d, ok := metaDate.(string); ok {
-		date = d
+		dateString = d
+		parsed, err := time.Parse("2006-01-02", dateString)
+		if err != nil {
+			return Article{}, errors.New("Article meta date field could not be parsed")
+		}
+		date = parsed
 	}
 
 	metaPublish := metaData["Publish"]
@@ -162,9 +199,10 @@ func ArticleExtractionFunction(
 	article.Description = description
 	article.Content = content.String()
 	article.Author = author
-	article.Date = date
+	article.DateString = dateString
 	article.URL = url
 	article.Publish = publish
+	article.Date = date
 
 	return article, nil
 }

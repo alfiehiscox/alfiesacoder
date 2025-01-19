@@ -1,10 +1,10 @@
 ---
-Title: Test 2 
+Title: Test 6
 Description: This is a test file that should be displayed.
-URL: /articles/test-2
+URL: /articles/test-6
 Author: Alfie Hiscox
-Date: 2024-01-02
-Publish: true 
+Date: 2024-01-06
+Publish: true
 ---
 
 # This is a test

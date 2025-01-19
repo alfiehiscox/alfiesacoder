@@ -103,25 +103,29 @@ templ StatusIcon(status string) {
 templ IndexArticleView(articles []services.Article) {
 	<div class="flex justify-between items-center mt-5">
 		<h2 class="text-xl font-bold ">Recent Articles: </h2>
-		<a href="/" class="text-sm text-blue-500 hover:underline">Archive</a>
+		<a href="/archive/1" class="text-sm text-blue-500 hover:underline">Archive</a>
 	</div>
 	<hr class="h-px mb-8 mt-2 bg-gray-200 border-0"/>
 	for i, article := range articles {
 		if i < 3 {
-			<h3 class="text-2xl font-bold hover:underline"><a href={ templ.URL(article.URL) }>{ article.Title }</a></h3>
-			<p class="mt-2">{ article.Description }</p>
-			<div class="flex text-sm text-gray-400 mt-2">
-				if article.Author != "" {
-					<span class="mr-1">By { article.Author }</span>
-				}
-				if article.Date != "" {
-					<span class="mr-1">-</span>
-					<span class="mr-1">{ article.Date }</span>
-				}
-			</div>
-			<hr class="h-px mb-8 mt-2 bg-gray-200 border-0"/>
+			@IndexArticle(article)
 		}
 	}
+}
+
+templ IndexArticle(article services.Article) {
+	<h3 class="text-2xl font-bold hover:underline hover:text-blue-600"><a href={ templ.URL(article.URL) }>{ article.Title }</a></h3>
+	<p class="mt-2">{ article.Description }</p>
+	<div class="flex text-sm text-gray-400 mt-2">
+		if article.Author != "" {
+			<span class="mr-1">By { article.Author }</span>
+		}
+		if article.DateString != "" {
+			<span class="mr-1">-</span>
+			<span class="mr-1">{ article.DateString }</span>
+		}
+	</div>
+	<hr class="h-px mb-8 mt-2 bg-gray-200 border-0"/>
 }
 
 templ NotFound() {

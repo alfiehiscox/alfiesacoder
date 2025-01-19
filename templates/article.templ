@@ -4,9 +4,25 @@ import "github.com/alfiehiscox/alfiesacoder/services"
 
 templ Article(article services.Article) {
 	@Base(article.Title) {
-		<main class="w-1/2 prose">
+		<main class="prose-lg">
 			<h1>{ article.Title }</h1>
 			@templ.Raw(article.Content)
+		</main>
+	}
+}
+
+templ ArticleArchive(articles []services.Article) {
+	@Base("Article Archive") {
+		<main class="w-3/5">
+			<div class="prose prose-lg max-w-none mt-28">
+				<h1>Article Archive</h1>
+			</div>
+			<hr class="h-px mb-4 mt-2 bg-gray-200 border-0"/>
+			<div>
+				for _, article := range articles {
+					@IndexArticle(article)
+				}
+			</div>
 		</main>
 	}
 }

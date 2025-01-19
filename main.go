@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strconv"
 	"sync"
 
 	"github.com/alfiehiscox/alfiesacoder/services"
@@ -52,6 +53,17 @@ func run(
 	if port == "" {
 		return errors.New("port not set in environment variables")
 	}
+	var articles_per_page int
+	per_page := getenv("articlePerPage")
+	if per_page == "" {
+		articles_per_page = services.ArticlePerPageDefault
+	} else {
+		parsed, err := strconv.Atoi(per_page)
+		articles_per_page = parsed
+		if err != nil {
+			return err
+		}
+	}
 
 	wd, err := getwd()
 	if err != nil {
@@ -72,6 +84,7 @@ func run(
 		path.Join(wd, "content", "articles"),
 		log,
 		markdown,
+		articles_per_page,
 	)
 	if err := articles.Init(); err != nil {
 		return err
@@ -141,5 +154,6 @@ func addRoutes(
 	static := http.FileServer(http.Dir("./static"))
 	mux.Handle("/", handleIndex(log, projectService, articleService))
 	mux.Handle("/static/", http.StripPrefix("/static/", static))
+	mux.Handle("/archive/{page}", handleArticleArchive(log, articleService))
 	mux.Handle("/articles/{title}", handleArticles(log, articleService))
 }
