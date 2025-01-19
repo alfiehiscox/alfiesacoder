@@ -15,18 +15,20 @@ templ Base(title string) {
 				<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 			</head>
 			<body>
-				<button id="toggle-dark-mode">Toggle Dark Mode</button>
-				<div class="flex flex-col justify-center items-center">
+				<div class="flex flex-col justify-center items-center dark:bg-zinc-900">
 					{ children... }
 					@Footer()
 				</div>
 				<script>
 					function setDarkMode() {
+						let toggleDarkModeButton = document.getElementById("toggle-dark-mode");
 						let mode = localStorage.getItem("mode") || localStorage.setItem("mode", "light");
 						if (mode == "dark") {
 							document.body.classList.add("dark");
+							toggleDarkModeButton.textContent = "Light Mode"
 						} else {
 							document.body.classList.remove("dark");
+							toggleDarkModeButton.textContent = "Dark Mode"
 						}
 					}
 
@@ -67,7 +69,7 @@ templ Index(
 	articles []services.Article,
 ) {
 	@Base("alfiesacoder") {
-		<main class="w-3/5 bg-white dark:bg-gray-800">
+		<main class="w-3/5 dark:text-gray-200">
 			@Header()
 			@IndexProjectView(projects)
 			@IndexArticleView(articles)
@@ -76,7 +78,10 @@ templ Index(
 }
 
 templ Header() {
-	<div class="prose prose-lg max-w-none mt-28 ">
+	<div class="text-right mt-3">
+		<button id="toggle-dark-mode" class="text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Dark Mode</button>
+	</div>
+	<div class="prose prose-lg max-w-none mt-28 dark:prose-invert">
 		<div>
 			<h1>
 				Alfie Hiscox - 
@@ -111,19 +116,19 @@ templ Header() {
 
 templ IndexProjectView(projects []services.Project) {
 	<div class="flex justify-between items-center">
-		<h2 class="text-xl font-bold">Projects: </h2>
+		<h2 class="text-xl font-bold dark:text-gray-100">Projects: </h2>
 		<a href="http://github.com/alfiehiscox" class="text-sm text-blue-500 hover:underline">More</a>
 	</div>
-	<hr class="h-px mb-4 mt-2 bg-gray-200 border-0"/>
+	<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>
 	<div class="grid grid-cols-3 gap-3">
 		for i, project := range projects {
 			if i < 6 {
-				<div class="p-4 min-h-24 rounded-lg border border-gray-300">
+				<div class="p-4 min-h-24 rounded-lg border border-gray-300 dark:bg-zinc-800 dark:border-none">
 					<div class="flex justify-between items-center mb-3">
-						<a class="text-blue-600 hover:underline" href={ templ.URL(project.URL) }>{ project.Name }</a>
+						<a class="text-blue-600 hover:underline dark:text-gray-100 dark:font-bold" href={ templ.URL(project.URL) }>{ project.Name }</a>
 						@StatusIcon(project.Status)
 					</div>
-					<p class="text-gray-600 text-sm">{ project.Description }</p>
+					<p class="text-gray-600 dark:text-gray-200 text-sm">{ project.Description }</p>
 				</div>
 			}
 		}
@@ -147,7 +152,7 @@ templ IndexArticleView(articles []services.Article) {
 		<h2 class="text-xl font-bold ">Recent Articles: </h2>
 		<a href="/archive/1" class="text-sm text-blue-500 hover:underline">Archive</a>
 	</div>
-	<hr class="h-px mb-8 mt-2 bg-gray-200 border-0"/>
+	<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>
 	for i, article := range articles {
 		if i < 3 {
 			@IndexArticle(article)
@@ -167,7 +172,7 @@ templ IndexArticle(article services.Article) {
 			<span class="mr-1">{ article.DateString }</span>
 		}
 	</div>
-	<hr class="h-px mb-8 mt-2 bg-gray-200 border-0"/>
+	<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>
 }
 
 templ NotFound() {
@@ -181,10 +186,13 @@ templ NotFound() {
 templ NavBar() {
 	<div>
 		<nav class="flex">
-			<a href="/" class="mr-2 p-2 pl-0 font-bold">{ "@alfiesacoder" }</a>
-			<a href="/archive/1" class="mr-2 p-2">Articles</a>
-			<a href="/" class="mr-2 p-2">CV</a>
+			<a href="/" class="mr-2 p-2 pl-0 font-bold dark:text-gray-400">{ "@alfiesacoder" }</a>
+			<a href="/archive/1" class="mr-2 p-2 dark:text-gray-400">Articles</a>
+			<a href="/" class="mr-2 p-2 dark:text-gray-400">CV</a>
+			<div class="flex p-2 justify-end item-center flex-grow mt-1">
+				<button id="toggle-dark-mode" class="text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Dark Mode</button>
+			</div>
 		</nav>
-		<hr class="h-px mb-4 mt-2 bg-gray-200 border-0"/>
+		<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>
 	</div>
 }

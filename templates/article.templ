@@ -10,12 +10,12 @@ templ Article(article services.Article) {
 		<div class="flex flex-col w-3/5 max-w-none">
 			@NavBar()
 			<main>
-				<h1 class="text-5xl my-3">{ article.Title }</h1>
-				<p class="text-gray-700 text-sm">{ article.Description }</p>
-				<p class="text-gray-500 text-xs mt-3">By { article.Author }</p>
-				<p class="text-gray-500 text-xs">Date: { article.DateString }</p>
-				<hr class="h-px mb-4 mt-2 bg-gray-200 border-0"/>
-				<article class="prose prose-lg">
+				<h1 class="text-5xl my-3 dark:text-white">{ article.Title }</h1>
+				<p class="text-gray-700 text-sm dark:text-gray-300">{ article.Description }</p>
+				<p class="text-gray-500 text-xs mt-3 dark:text-gray-400">By { article.Author }</p>
+				<p class="text-gray-500 text-xs dark:text-gray-400">Date: { article.DateString }</p>
+				<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-600"/>
+				<article class="prose prose-lg dark:prose-invert">
 					@templ.Raw(article.Content)
 				</article>
 			</main>
