@@ -10,6 +10,7 @@ Personal blog and website.
 
 ## TODO
 
-- [] Implement Dark Mode
+- [x] Implement Dark Mode
+	- [] Implemented to mechanism, now just need to add all the dark styles
 - [] Create CV Template + Link 
 - [] Populate with actual Content
