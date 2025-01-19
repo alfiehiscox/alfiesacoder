@@ -6,8 +6,10 @@ Personal blog and website.
 
 - Go ❤️
 - Templ + Goldmark
-- AlpineJS + Tailwindcss
+- Tailwindcss
 
 ## TODO
 
-- [] Need to sort articles by publish date
+- [] Implement Dark Mode
+- [] Create CV Template + Link 
+- [] Populate with actual Content

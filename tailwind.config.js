@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "selector",
   content: ["./templates/**/*.{html,templ,js}"],
   theme: {
     extend: {},
@@ -7,10 +8,5 @@ module.exports = {
   plugins: [
 	require('@tailwindcss/typography'),
   ],
-  safelist: [
-	{
-		pattern: /bg-blue-+/,
-	}
-  ], 
 }
 
