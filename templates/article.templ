@@ -1,28 +1,53 @@
 package templates
 
-import "github.com/alfiehiscox/alfiesacoder/services"
+import (
+	"fmt"
+	"github.com/alfiehiscox/alfiesacoder/services"
+)
 
 templ Article(article services.Article) {
 	@Base(article.Title) {
-		<main class="prose-lg">
+		<main class="w-3/5 prose prose-lg">
 			<h1>{ article.Title }</h1>
-			@templ.Raw(article.Content)
+			<article>
+				@templ.Raw(article.Content)
+			</article>
 		</main>
 	}
 }
 
-templ ArticleArchive(articles []services.Article) {
+templ ArticleArchive(page int, max_page int, articles []services.Article) {
 	@Base("Article Archive") {
-		<main class="w-3/5">
-			<div class="prose prose-lg max-w-none mt-28">
-				<h1>Article Archive</h1>
-			</div>
-			<hr class="h-px mb-4 mt-2 bg-gray-200 border-0"/>
-			<div>
-				for _, article := range articles {
-					@IndexArticle(article)
-				}
-			</div>
-		</main>
+		<div class="flex flex-col w-3/5">
+			@NavBar()
+			<main class="">
+				<div class="mt-2 flex justify-between items-center">
+					<h1 class="text-3xl">Article Archive</h1>
+					<p>{ fmt.Sprintf("%d", page) } / { fmt.Sprintf("%d", max_page) }</p>
+				</div>
+				<hr class="h-px mb-4 mt-2 bg-gray-200 border-0"/>
+				<div>
+					for _, article := range articles {
+						@IndexArticle(article)
+					}
+				</div>
+				<div class="flex justify-between">
+					if page <= 1 {
+						<span class="text-sm text-gray-500">Prev</span>
+					} else {
+						<a class="text-sm text-blue-500 hover:underline" href={ templ.URL(fmt.Sprintf("/archive/%d", page-1)) }>
+							Prev
+						</a>
+					}
+					if page+1 > max_page {
+						<span class="text-sm text-gray-500">Next</span>
+					} else {
+						<a class="text-sm text-blue-500 hover:underline" href={ templ.URL(fmt.Sprintf("/archive/%d", page+1)) }>
+							Next
+						</a>
+					}
+				</div>
+			</main>
+		</div>
 	}
 }

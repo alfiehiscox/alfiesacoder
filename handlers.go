@@ -65,7 +65,7 @@ func handleArticleArchive(
 			}
 
 			archive := articleService.GetPublishedArticlesByPage(page)
-			archive_page := templates.ArticleArchive(archive)
+			archive_page := templates.ArticleArchive(page+1, articleService.MaxPages, archive)
 			archive_page.Render(r.Context(), w)
 
 		},

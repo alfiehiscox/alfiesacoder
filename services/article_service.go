@@ -39,6 +39,7 @@ type ArticleService struct {
 	PublishedArticles []Article
 	Markdown          goldmark.Markdown
 	ArticlePerPage    int
+	MaxPages          int
 }
 
 func NewArticleService(
@@ -86,8 +87,10 @@ func (as *ArticleService) Init() error {
 		as.Articles[article.URL] = article
 	}
 
-	as.initialised = true
 	as.PublishedArticles = as.getPublishedArticles()
+	as.MaxPages = len(as.PublishedArticles)/as.ArticlePerPage + 1
+
+	as.initialised = true
 	return nil
 }
 
@@ -121,9 +124,8 @@ func (as *ArticleService) GetPublishedArticlesByPage(page int) (article []Articl
 	}
 
 	all_articles := as.PublishedArticles
-	total_possible_pages := len(all_articles) / as.ArticlePerPage
 
-	if page > total_possible_pages || page < 0 {
+	if page > as.MaxPages || page < 0 {
 		start_index := 0
 		end_index := min(as.ArticlePerPage, len(all_articles))
 		return all_articles[start_index:end_index]
