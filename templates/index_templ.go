@@ -209,7 +209,7 @@ func IndexProjectView(projects []services.Project) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"flex justify-between items-center\"><h2 class=\"text-xl font-bold dark:text-gray-100\">Projects: </h2><a href=\"http://github.com/alfiehiscox\" class=\"text-sm text-blue-500 hover:underline\">More</a></div><hr class=\"h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700\"><div class=\"grid grid-cols-3 gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"flex justify-between items-center\"><h2 class=\"text-xl font-bold dark:text-gray-100\">Personal Projects: </h2><a href=\"http://github.com/alfiehiscox\" class=\"text-sm text-blue-500 hover:underline\">More</a></div><hr class=\"h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700\"><div class=\"grid grid-cols-3 gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
