@@ -13,48 +13,12 @@ templ Base(title string) {
 				<title>{ title }</title>
 				<link rel="stylesheet" href="/static/output.css"/>
 				<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+				<script defer src="/static/core.js"></script>
 			</head>
 			<body>
 				<div class="flex flex-col justify-center items-center dark:bg-zinc-900">
 					{ children... }
-					@Footer()
 				</div>
-				<script>
-					function setDarkMode() {
-						let toggleDarkModeButton = document.getElementById("toggle-dark-mode");
-						let mode = localStorage.getItem("mode") || localStorage.setItem("mode", "light");
-						if (mode == "dark") {
-							document.body.classList.add("dark");
-							toggleDarkModeButton.textContent = "Light Mode"
-						} else {
-							document.body.classList.remove("dark");
-							toggleDarkModeButton.textContent = "Dark Mode"
-						}
-					}
-
-					function toggleDarkMode() {
-						let mode = localStorage.getItem("mode") || localStorage.setItem("mode", "light");
-						if (mode == "dark") {
-							localStorage.setItem("mode", "light")
-						} else if (mode == "light"){
-							localStorage.setItem("mode", "dark")
-						} else {
-							localStorage.setItem("mode", "light")
-						}
-					}
-
-					function init() {
-						setDarkMode()
-
-						const toggleDarkModeButton = document.getElementById("toggle-dark-mode");
-						toggleDarkModeButton.addEventListener("click", () => {
-							toggleDarkMode()
-							setDarkMode()
-						})
-					}
-
-					init()
-				</script>
 			</body>
 		</html>
 	</html>
@@ -73,6 +37,7 @@ templ Index(
 			@Header()
 			@IndexProjectView(projects)
 			@IndexArticleView(articles)
+			@Footer()
 		</main>
 	}
 }
@@ -186,9 +151,9 @@ templ NotFound() {
 templ NavBar() {
 	<div>
 		<nav class="flex">
-			<a href="/" class="mr-2 p-2 pl-0 font-bold dark:text-gray-400">{ "@alfiesacoder" }</a>
-			<a href="/archive/1" class="mr-2 p-2 dark:text-gray-400">Articles</a>
-			<a href="/" class="mr-2 p-2 dark:text-gray-400">CV</a>
+			<a href="/" class="mr-2 p-2 pl-0 font-bold dark:text-gray-200">{ "@alfiesacoder" }</a>
+			<a href="/archive/1" class="mr-2 p-2 dark:text-gray-200">Articles</a>
+			<a href="/" class="mr-2 p-2 dark:text-gray-200">CV</a>
 			<div class="flex p-2 justify-end item-center flex-grow mt-1">
 				<button id="toggle-dark-mode" class="text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Dark Mode</button>
 			</div>

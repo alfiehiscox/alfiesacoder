@@ -44,7 +44,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/static/output.css\"><link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\"></head><body><div class=\"flex flex-col justify-center items-center dark:bg-zinc-900\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/static/output.css\"><link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\"><script defer src=\"/static/core.js\"></script></head><body><div class=\"flex flex-col justify-center items-center dark:bg-zinc-900\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -52,11 +52,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Footer().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><script>\n\t\t\t\t\tfunction setDarkMode() {\n\t\t\t\t\t\tlet toggleDarkModeButton = document.getElementById(\"toggle-dark-mode\");\n\t\t\t\t\t\tlet mode = localStorage.getItem(\"mode\") || localStorage.setItem(\"mode\", \"light\");\n\t\t\t\t\t\tif (mode == \"dark\") {\n\t\t\t\t\t\t\tdocument.body.classList.add(\"dark\");\n\t\t\t\t\t\t\ttoggleDarkModeButton.textContent = \"Light Mode\"\n\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\tdocument.body.classList.remove(\"dark\");\n\t\t\t\t\t\t\ttoggleDarkModeButton.textContent = \"Dark Mode\"\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\n\t\t\t\t\tfunction toggleDarkMode() {\n\t\t\t\t\t\tlet mode = localStorage.getItem(\"mode\") || localStorage.setItem(\"mode\", \"light\");\n\t\t\t\t\t\tif (mode == \"dark\") {\n\t\t\t\t\t\t\tlocalStorage.setItem(\"mode\", \"light\")\n\t\t\t\t\t\t} else if (mode == \"light\"){\n\t\t\t\t\t\t\tlocalStorage.setItem(\"mode\", \"dark\")\n\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\tlocalStorage.setItem(\"mode\", \"light\")\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\n\t\t\t\t\tfunction init() {\n\t\t\t\t\t\tsetDarkMode()\n\n\t\t\t\t\t\tconst toggleDarkModeButton = document.getElementById(\"toggle-dark-mode\");\n\t\t\t\t\t\ttoggleDarkModeButton.addEventListener(\"click\", () => {\n\t\t\t\t\t\t\ttoggleDarkMode()\n\t\t\t\t\t\t\tsetDarkMode()\n\t\t\t\t\t\t})\n\t\t\t\t\t}\n\n\t\t\t\t\tinit()\n\t\t\t\t</script></body></html></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></body></html></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,6 +138,10 @@ func Index(
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = IndexArticleView(articles).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = Footer().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -231,7 +231,7 @@ func IndexProjectView(projects []services.Project) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(project.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 128, Col: 127}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 93, Col: 127}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -252,7 +252,7 @@ func IndexProjectView(projects []services.Project) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(project.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 131, Col: 78}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 96, Col: 78}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -392,7 +392,7 @@ func IndexArticle(article services.Article) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(article.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 164, Col: 118}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 129, Col: 118}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -405,7 +405,7 @@ func IndexArticle(article services.Article) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(article.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 165, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 130, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -423,7 +423,7 @@ func IndexArticle(article services.Article) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(article.Author)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 168, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 133, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -442,7 +442,7 @@ func IndexArticle(article services.Article) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(article.DateString)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 172, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 137, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -529,20 +529,20 @@ func NavBar() templ.Component {
 			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div><nav class=\"flex\"><a href=\"/\" class=\"mr-2 p-2 pl-0 font-bold dark:text-gray-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div><nav class=\"flex\"><a href=\"/\" class=\"mr-2 p-2 pl-0 font-bold dark:text-gray-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs("@alfiesacoder")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 189, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/index.templ`, Line: 154, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</a> <a href=\"/archive/1\" class=\"mr-2 p-2 dark:text-gray-400\">Articles</a> <a href=\"/\" class=\"mr-2 p-2 dark:text-gray-400\">CV</a><div class=\"flex p-2 justify-end item-center flex-grow mt-1\"><button id=\"toggle-dark-mode\" class=\"text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200\">Dark Mode</button></div></nav><hr class=\"h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</a> <a href=\"/archive/1\" class=\"mr-2 p-2 dark:text-gray-200\">Articles</a> <a href=\"/\" class=\"mr-2 p-2 dark:text-gray-200\">CV</a><div class=\"flex p-2 justify-end item-center flex-grow mt-1\"><button id=\"toggle-dark-mode\" class=\"text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200\">Dark Mode</button></div></nav><hr class=\"h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
