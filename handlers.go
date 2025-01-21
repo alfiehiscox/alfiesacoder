@@ -13,11 +13,13 @@ func handleIndex(
 	log *log.Logger,
 	projectService *services.ProjectService,
 	articleService *services.ArticleService,
+	statsService *services.ArticleStatsService,
 ) http.Handler {
 	projects := projectService.GetPublishedProjects()
 	articles := articleService.PublishedArticles
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			statsService.IncrementView("/")
 			index := templates.Index(projects, articles)
 			index.Render(r.Context(), w)
 		},
@@ -31,6 +33,7 @@ func handleStatic() http.Handler {
 func handleArticles(
 	log *log.Logger,
 	articleService *services.ArticleService,
+	statsService *services.ArticleStatsService,
 ) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -40,6 +43,7 @@ func handleArticles(
 				templates.NotFound().Render(r.Context(), w)
 				return
 			}
+			statsService.IncrementView(article.URL)
 			article_page := templates.Article(article)
 			article_page.Render(r.Context(), w)
 		},
@@ -49,6 +53,7 @@ func handleArticles(
 func handleArticleArchive(
 	log *log.Logger,
 	articleService *services.ArticleService,
+	statsService *services.ArticleStatsService,
 ) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +68,8 @@ func handleArticleArchive(
 			if page > 0 {
 				page = page - 1
 			}
+
+			statsService.IncrementView(r.RequestURI)
 
 			archive := articleService.GetPublishedArticlesByPage(page)
 			archive_page := templates.ArticleArchive(page+1, articleService.MaxPages, archive)

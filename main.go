@@ -90,7 +90,13 @@ func run(
 		return err
 	}
 
-	srv := NewServer(log, projects, articles)
+	statsFile := path.Join(wd, "stats.json")
+	statsService, err := services.NewArticleStatsService(ctx, log, statsFile)
+	if err != nil {
+		return err
+	}
+
+	srv := NewServer(log, projects, articles, statsService)
 	httpServer := &http.Server{
 		Addr:    net.JoinHostPort(host, port),
 		Handler: srv,
@@ -128,6 +134,7 @@ func NewServer(
 	log *log.Logger,
 	projectService *services.ProjectService,
 	articleService *services.ArticleService,
+	statsService *services.ArticleStatsService,
 ) http.Handler {
 
 	mux := http.NewServeMux()
@@ -137,6 +144,7 @@ func NewServer(
 		log,
 		projectService,
 		articleService,
+		statsService,
 	)
 
 	var handler http.Handler = mux
@@ -150,10 +158,11 @@ func addRoutes(
 	log *log.Logger,
 	projectService *services.ProjectService,
 	articleService *services.ArticleService,
+	statsService *services.ArticleStatsService,
 ) {
 	static := http.FileServer(http.Dir("./static"))
-	mux.Handle("/", handleIndex(log, projectService, articleService))
+	mux.Handle("/", handleIndex(log, projectService, articleService, statsService))
 	mux.Handle("/static/", http.StripPrefix("/static/", static))
-	mux.Handle("/archive/{page}", handleArticleArchive(log, articleService))
-	mux.Handle("/articles/{title}", handleArticles(log, articleService))
+	mux.Handle("/archive/{page}", handleArticleArchive(log, articleService, statsService))
+	mux.Handle("/articles/{title}", handleArticles(log, articleService, statsService))
 }
