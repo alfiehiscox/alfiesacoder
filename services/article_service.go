@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -185,7 +186,8 @@ func ArticleExtractionFunction(
 		dateString = d
 		parsed, err := time.Parse("2006-01-02", dateString)
 		if err != nil {
-			return Article{}, errors.New("Article meta date field could not be parsed")
+			msg := fmt.Sprintf("Article meta date field could not be parsed: %s\n", err)
+			return Article{}, errors.New(msg)
 		}
 		date = parsed
 	}

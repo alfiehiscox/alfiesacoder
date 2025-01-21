@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -75,6 +76,21 @@ func handleArticleArchive(
 			archive_page := templates.ArticleArchive(page+1, articleService.MaxPages, archive)
 			archive_page.Render(r.Context(), w)
 
+		},
+	)
+}
+
+func handleArticleViews(
+	log *log.Logger,
+	statsService *services.ArticleStatsService,
+) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			if err := statsService.WriteStats(w); err != nil {
+				log.Printf("ERROR: Could not serve article views: %s\n", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				io.WriteString(w, "505 - Internal Server Error")
+			}
 		},
 	)
 }

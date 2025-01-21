@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,7 +13,6 @@ import (
 	"sync"
 
 	"github.com/alfiehiscox/alfiesacoder/services"
-	"github.com/joho/godotenv"
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
 )
@@ -41,18 +38,11 @@ func run(
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 	log := log.New(stdout, "alfiesacoder: ", log.LstdFlags)
 
-	if err := godotenv.Load(); err != nil {
-		return err
+	port := getenv("PORT")
+	if port == "" {
+		port = "8000"
 	}
 
-	host := getenv("host")
-	if host == "" {
-		return errors.New("host not set in environment variables")
-	}
-	port := getenv("port")
-	if port == "" {
-		return errors.New("port not set in environment variables")
-	}
 	var articles_per_page int
 	per_page := getenv("articlePerPage")
 	if per_page == "" {
@@ -98,13 +88,13 @@ func run(
 
 	srv := NewServer(log, projects, articles, statsService)
 	httpServer := &http.Server{
-		Addr:    net.JoinHostPort(host, port),
+		Addr:    ":" + port,
 		Handler: srv,
 	}
 
 	// Main Listener
 	go func() {
-		log.Printf("listening on %s:%s\n", host, port)
+		log.Printf("listening on Port=%s\n", port)
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Fprintf(stderr, "error listening and server: %s\n", err)
 		}
@@ -164,5 +154,6 @@ func addRoutes(
 	mux.Handle("/", handleIndex(log, projectService, articleService, statsService))
 	mux.Handle("/static/", http.StripPrefix("/static/", static))
 	mux.Handle("/archive/{page}", handleArticleArchive(log, articleService, statsService))
+	mux.Handle("/articles/views", handleArticleViews(log, statsService))
 	mux.Handle("/articles/{title}", handleArticles(log, articleService, statsService))
 }

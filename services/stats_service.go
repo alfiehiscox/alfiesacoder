@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
 	"os"
 	"sync"
@@ -82,6 +83,18 @@ func (ss *ArticleStatsService) IncrementView(article string) {
 	default:
 		ss.log.Printf("Failed to queue view increment for article '%s' because buffer is full.\n", article)
 	}
+}
+
+func (ss *ArticleStatsService) WriteStats(w io.Writer) error {
+	ss.lock.Lock()
+	defer ss.lock.Unlock()
+
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(ss.stats); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (ss *ArticleStatsService) loadCurrentStats() error {
