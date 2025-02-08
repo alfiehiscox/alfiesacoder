@@ -14,6 +14,7 @@ import (
 
 	"github.com/alfiehiscox/alfiesacoder/services"
 	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	meta "github.com/yuin/goldmark-meta"
 )
 
@@ -61,7 +62,12 @@ func run(
 	}
 
 	markdown := goldmark.New(
-		goldmark.WithExtensions(meta.Meta),
+		goldmark.WithExtensions(
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("dracula"),
+			),
+			meta.Meta,
+		),
 	)
 
 	projects := services.NewProjectService(ctx, path.Join(wd, "content", "projects.json"), log)

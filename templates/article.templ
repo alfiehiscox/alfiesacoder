@@ -7,7 +7,7 @@ import (
 
 templ Article(article services.Article) {
 	@Base(article.Title) {
-		<div class="flex flex-col w-3/5 max-w-none min-h-screen">
+		<div class="flex flex-col w-3/5 min-h-screen">
 			@NavBar()
 			<main>
 				<h1 class="text-5xl my-3 dark:text-white">{ article.Title }</h1>
@@ -15,7 +15,7 @@ templ Article(article services.Article) {
 				<p class="text-gray-500 text-xs mt-3 dark:text-gray-400">By { article.Author }</p>
 				<p class="text-gray-500 text-xs dark:text-gray-400">Date: { article.DateString }</p>
 				<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>
-				<article class="prose prose-lg dark:prose-invert">
+				<article class="prose dark:prose-invert max-w-none ">
 					@templ.Raw(article.Content)
 				</article>
 			</main>
@@ -35,8 +35,14 @@ templ ArticleArchive(page int, max_page int, articles []services.Article) {
 				</div>
 				<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>
 				<div>
-					for _, article := range articles {
-						@IndexArticle(article)
+					if len(articles) > 0 {
+						for _, article := range articles {
+							@IndexArticle(article)
+						}
+					} else {
+						<div class="flex justify-center items-center py-5 text-gray-400 dark:text-gray-600">
+							<p>Nothing here yet!</p>
+						</div>
 					}
 				</div>
 				<div class="flex justify-between">

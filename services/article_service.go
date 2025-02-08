@@ -103,6 +103,19 @@ func (as *ArticleService) GetArticleByURL(url string) (a Article, ok bool) {
 	return
 }
 
+func (as *ArticleService) GetPublishedArticleByURL(url string) (a Article, ok bool) {
+	if !as.initialised {
+		return
+	}
+
+	a, ok = as.Articles[url]
+	if ok {
+		ok = a.Publish
+	}
+
+	return
+}
+
 func (as *ArticleService) getPublishedArticles() (articles []Article) {
 	for _, article := range as.Articles {
 		if article.Publish {
