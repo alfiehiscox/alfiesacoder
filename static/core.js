@@ -3,10 +3,10 @@ function setDarkMode() {
 	let mode = localStorage.getItem("mode") || localStorage.setItem("mode", "light");
 	if (mode == "dark") {
 		document.body.classList.add("dark");
-		toggleDarkModeButton.textContent = "Light Mode";
+		toggleDarkModeButton.textContent = "Light";
 	} else {
 		document.body.classList.remove("dark");
-		toggleDarkModeButton.textContent = "Dark Mode";
+		toggleDarkModeButton.textContent = "Dark";
 	}
 }
 

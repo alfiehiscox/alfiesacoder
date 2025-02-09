@@ -16,7 +16,7 @@ templ Base(title string) {
 				<script defer src="/static/core.js"></script>
 			</head>
 			<body>
-				<div class="flex flex-col justify-center items-center dark:bg-zinc-900">
+				<div class="flex w-full min-h-screen flex-col justify-center items-center dark:bg-zinc-900">
 					{ children... }
 				</div>
 			</body>
@@ -25,7 +25,7 @@ templ Base(title string) {
 }
 
 templ Footer() {
-	<footer class="min-h-32"></footer>
+	<footer class="min-h-32 h-auto"></footer>
 }
 
 templ Index(
@@ -33,7 +33,7 @@ templ Index(
 	articles []services.Article,
 ) {
 	@Base("alfiesacoder") {
-		<main class="w-3/5 dark:text-gray-200">
+		<main class="w-4/5 md:w-3/5 dark:text-gray-200">
 			@Header()
 			@IndexProjectView(projects)
 			@IndexArticleView(articles)
@@ -44,9 +44,9 @@ templ Index(
 
 templ Header() {
 	<div class="text-right mt-3">
-		<button id="toggle-dark-mode" class="text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Dark Mode</button>
+		<button id="toggle-dark-mode" class="text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Dark</button>
 	</div>
-	<div class="prose prose-lg max-w-none mt-28 dark:prose-invert">
+	<div class="prose prose-sm md:prose-lg max-w-none mt-28 dark:prose-invert">
 		<div>
 			<h1>Alfie Hiscox - Developer</h1>
 			<div class="flex items-center">
@@ -84,7 +84,7 @@ templ IndexProjectView(projects []services.Project) {
 		<a href="http://github.com/alfiehiscox" class="text-sm text-blue-500 hover:underline">More</a>
 	</div>
 	<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>
-	<div class="grid grid-cols-3 gap-3">
+	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
 		for i, project := range projects {
 			if i < 6 {
 				<div class="p-4 min-h-24 rounded-lg border border-gray-300 dark:bg-zinc-800 dark:border-none">
@@ -156,11 +156,11 @@ templ NotFound() {
 templ NavBar() {
 	<div>
 		<nav class="flex">
-			<a href="/" class="mr-2 p-2 pl-0 font-bold dark:text-gray-200">{ "@alfiesacoder" }</a>
-			<a href="/archive/1" class="mr-2 p-2 dark:text-gray-200">Articles</a>
-			<a href="/static/alfie-hiscox-resume.pdf" class="mr-2 p-2 dark:text-gray-200">CV</a>
+			<a href="/" class="text-sm md:text-md mr-2 p-2 pl-0 font-bold dark:text-gray-200">{ "@alfiesacoder" }</a>
+			<a href="/archive/1" class="text-sm md:text-md mr-2 p-2 dark:text-gray-200">Articles</a>
+			<a href="/static/alfie-hiscox-resume.pdf" class="text-sm md:text-md mr-2 p-2 dark:text-gray-200">CV</a>
 			<div class="flex p-2 justify-end item-center flex-grow mt-1">
-				<button id="toggle-dark-mode" class="text-gray-500 text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Dark Mode</button>
+				<button id="toggle-dark-mode" class="text-gray-500 text-xs sm:text-sm hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">Dark</button>
 			</div>
 		</nav>
 		<hr class="h-px mb-4 mt-2 bg-gray-200 border-0 dark:bg-gray-700"/>

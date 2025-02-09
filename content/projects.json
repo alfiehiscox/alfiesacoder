@@ -1,9 +1,23 @@
 [
 	{
-		"Name": "Zig Chip 8 Emulation",
-		"Description": "A simple Chip 8 emulator written in Zig (0.14.0)",
-		"URL": "https://github.com/alfiehiscox/chip-8",
+		"Name": "pibbl",
+		"Description": "A fully featured Gameboy DMG emulator written entirely in Odin",
+		"URL": "https://github.com/alfiehiscox/pibbl",
 		"Status": "Doing",
+		"Publish": true
+	},
+	{
+		"Name": "Raycaster in Odin",
+		"Description": "A untextured Wolfenstein3D-like Raycaster!",
+		"URL": "https://github.com/alfiehiscox/odinary-raycaster",
+		"Status": "Doing",
+		"Publish": true
+	},
+	{
+		"Name": "Zig Chip8 Emulation",
+		"Description": "A simple Chip8 emulator written in Zig (0.14.0)",
+		"URL": "https://github.com/alfiehiscox/chip-8",
+		"Status": "Done",
 		"Publish": true
 	},
 	{
