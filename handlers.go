@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -34,7 +35,13 @@ func handleStatic() http.Handler {
 func handleCVDownload(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", "attachment; filename=\"alfie-hiscox-resume.pdf\"")
 	w.Header().Set("Content-Type", "application/pdf")
-	http.ServeFile(w, r, "./static/alfie-hiscox-resume.pdf")
+	w.Header().Set("X-Robots-Tag", "noindex, nofollow")
+	http.ServeFile(w, r, "./private/alfie-hiscox-resume.pdf")
+}
+
+func handleRobotsTxt(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	fmt.Fprint(w, "User-agent: *\nDisallow: /static/alfie-hiscox-resume.pdf\nDisallow: /cv\n")
 }
 
 func handleArticles(
