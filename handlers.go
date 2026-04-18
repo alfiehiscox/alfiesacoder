@@ -31,6 +31,12 @@ func handleStatic() http.Handler {
 	return http.FileServer(http.Dir("./static"))
 }
 
+func handleCVDownload(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Disposition", "attachment; filename=\"alfie-hiscox-resume.pdf\"")
+	w.Header().Set("Content-Type", "application/pdf")
+	http.ServeFile(w, r, "./static/alfie-hiscox-resume.pdf")
+}
+
 func handleArticles(
 	log *log.Logger,
 	articleService *services.ArticleService,

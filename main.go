@@ -158,6 +158,7 @@ func addRoutes(
 ) {
 	static := http.FileServer(http.Dir("./static"))
 	mux.Handle("/", handleIndex(log, projectService, articleService, statsService))
+	mux.HandleFunc("GET /cv", handleCVDownload)
 	mux.Handle("/static/", http.StripPrefix("/static/", static))
 	mux.Handle("/archive/{page}", handleArticleArchive(log, articleService, statsService))
 	mux.Handle("/articles/views", handleArticleViews(log, statsService))
